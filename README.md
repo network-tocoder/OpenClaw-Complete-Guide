@@ -1,897 +1,1064 @@
-# OpenClaw + NetBox MCP Integration
-## Complete Video Guide with Transcript & Steps
+<p align="center">
+  <a href="https://git.io/typing-svg">
+    <img src="https://readme-typing-svg.herokuapp.com?font=Fira+Code&weight=700&size=45&pause=1000&color=FF4500&center=true&vCenter=true&width=1500&lines=OpenClaw+AI+Agent+Framework;Build+Autonomous+AI+Agents;Connect+AI+to+Your+Tools" alt="OpenClaw AI Agent Framework" />
+  </a>
+</p>
+
+<p align="center">
+  <img src="assets/openclaw-banner.png" alt="OpenClaw Banner" width="800">
+</p>
+
+<p align="center">
+  <img src="https://img.shields.io/badge/AI_Agents-FF4500?style=for-the-badge&logo=openai&logoColor=white" alt="AI Agents">
+  <img src="https://img.shields.io/badge/MCP-8A2BE2?style=for-the-badge" alt="MCP">
+  <img src="https://img.shields.io/badge/LLM-007ACC?style=for-the-badge" alt="LLM">
+  <img src="https://img.shields.io/badge/Automation-D1242F?style=for-the-badge" alt="Automation">
+  <img src="https://img.shields.io/badge/Local_AI-228B22?style=for-the-badge" alt="Local AI">
+</p>
+
+<p align="center">
+  <a href="https://docs.openclaw.ai"><img src="https://img.shields.io/badge/Docs-FF4500?style=for-the-badge&logo=readthedocs&logoColor=white" alt="Documentation"></a>
+  <a href="https://openclaw.ai/showcase"><img src="https://img.shields.io/badge/Showcase-0A66C2?style=for-the-badge&logo=producthunt&logoColor=white" alt="Showcase"></a>
+  <a href="https://github.com/openclaw-ai/openclaw"><img src="https://img.shields.io/badge/GitHub-181717?style=for-the-badge&logo=github&logoColor=white" alt="GitHub"></a>
+</p>
 
 ---
 
-## VIDEO METADATA
+## 🎯 What is OpenClaw?
 
-| Field | Value |
-|-------|-------|
-| **Title** | OpenClaw → NetBox MCP → AI-Powered Network Automation |
-| **Alt Titles** | "Build AI Agent for Network Automation - OpenClaw Setup" / "ChatGPT for NetBox? OpenClaw + MCP Tutorial" |
-| **Duration** | 20-25 minutes |
-| **Series** | AI Powered Automation - Part 4 |
+OpenClaw is an AI Agent framework that connects LLMs (Claude, Gemini, GPT, Local Models) to your tools via MCP (Model Context Protocol). Build autonomous agents that can query databases, manage infrastructure, create tickets, and more.
 
----
+### Three Layers of OpenClaw
 
-## VIDEO TIMELINE
-
-| Section | Time | Duration |
-|---------|------|----------|
-| Intro & Concepts | 0:00-3:00 | 3 min |
-| OpenClaw Installation | 3:00-7:00 | 4 min |
-| Chat Integration (Slack/Web UI) | 7:00-10:00 | 3 min |
-| NetBox MCP Setup | 10:00-14:00 | 4 min |
-| Create Custom Skill | 14:00-18:00 | 4 min |
-| End-to-End Testing | 18:00-21:00 | 3 min |
-| Wrap Up | 21:00-22:00 | 1 min |
+| Layer | Component | Description |
+|-------|-----------|-------------|
+| 🧠 **Brain** | LLM | Claude, Gemini, GPT, or Local Models |
+| 🤲 **Hands** | MCP Tools | Connect to NetBox, Jira, GitHub, etc. |
+| 📚 **Expertise** | Skills | Instructions for when/how to use tools |
 
 ---
 
-# SECTION 1: INTRO & CONCEPTS [0:00-3:00]
+## 📋 Table of Contents
 
-## Transcript
-
-**[SCREEN: Recap slide showing AWX + NetBox + GitHub]**
-
-Hey, what's going on everybody - welcome to Part 4 of our AI Powered Automation series.
-
-So quick recap - in the last few videos, we built a complete GitOps pipeline. We've got AWX running jobs, NetBox as our source of truth, GitHub syncing everything, custom execution environments - the whole stack.
-
-Today, we're adding something really exciting on top of all that - an AI layer.
-
-We're going to set up OpenClaw, which is this new AI agent framework, and connect it to our NetBox. By the end of this video, you'll be chatting with an AI that can actually query and update your network inventory.
-
-**[SCREEN: Architecture diagram - Layers]**
-
-But before we dive in, let me quickly explain how OpenClaw actually works. It's built in three layers - and understanding this will make everything else click.
-
-**Layer 1: The LLM**
-
-At the bottom, we have the large language model - in our case, Claude from Anthropic. This is the brain, the thing that understands your questions and figures out what to do.
-
-**Layer 2: Tools (MCP Servers)**
-
-On top of that, we have Tools. These are MCP servers - Model Context Protocol. Think of these as the hands. The NetBox MCP is a tool that knows how to talk to NetBox API. There's tools for ServiceNow, GitHub, Slack - all sorts of things.
-
-The tools themselves don't decide anything. They just provide capabilities.
-
-**Layer 3: Skills**
-
-And then at the top, we have Skills. This is where it gets interesting. Skills are like instructions that tell the AI when and how to use those tools.
-
-So if Tools are the hammer and screwdriver, Skills are the instructions for "build a table" - they know which tools to use, in what order, for what purpose.
-
-**[SCREEN: Simple diagram]**
-
-Let me give you a quick example:
-
-- Tool: NetBox MCP - can query devices, create sites, update inventory
-- Skill: "Audit Inventory" - uses the NetBox tool to check for devices missing IP addresses, then reports a summary
-
-The skill combines the tool with logic and context. Makes sense?
-
-Alright, with that foundation - let's start building this thing.
+1. [Prerequisites](#-prerequisites)
+2. [Installation](#-installation)
+3. [Configuration](#-configuration)
+4. [Service Management](#-service-management)
+5. [Web UI / Dashboard](#-web-ui--dashboard)
+6. [Model Providers](#-model-providers)
+7. [Configuration Files](#-configuration-files)
+8. [MCP Integration](#-mcp-integration)
+9. [Skills](#-skills)
+10. [Troubleshooting](#-troubleshooting)
+11. [Logs](#-logs)
+12. [Uninstallation](#-uninstallation)
+13. [Common Issues & Solutions](#-common-issues--solutions)
 
 ---
 
-# SECTION 2: OPENCLAW INSTALLATION [3:00-7:00]
+## 🛠️ Tech Stack
 
-## Transcript
+![Node.js](https://img.shields.io/badge/Node.js-339933?style=flat-square&logo=nodedotjs&logoColor=white)
+![TypeScript](https://img.shields.io/badge/TypeScript-3178C6?style=flat-square&logo=typescript&logoColor=white)
+![Claude](https://img.shields.io/badge/Claude-8A2BE2?style=flat-square&logo=anthropic&logoColor=white)
+![Gemini](https://img.shields.io/badge/Gemini-4285F4?style=flat-square&logo=google&logoColor=white)
+![LM Studio](https://img.shields.io/badge/LM_Studio-00A98F?style=flat-square&logo=ai&logoColor=white)
+![MCP](https://img.shields.io/badge/MCP-FF4500?style=flat-square&logo=protocol&logoColor=white)
 
-**[SCREEN: Terminal]**
+---
 
-Okay, let's get OpenClaw installed. I'm going to do this on a fresh Linux machine - you can use Ubuntu, Debian, whatever you've got.
+## 📦 Prerequisites
 
-First, let me make sure we have the prerequisites.
+| Requirement | Details |
+|-------------|---------|
+| **OS** | Linux (Ubuntu 22.04+) or macOS |
+| **Node.js** | v22+ (auto-installed if missing) |
+| **RAM** | 4GB+ minimum |
+| **LLM Provider** | API key (Anthropic/Google/OpenAI) OR local LLM (LM Studio) |
 
-## Steps to Follow
+---
 
-```bash
-# Check Python version (need 3.10+)
-python3 --version
+## 🚀 Installation
 
-# Install required packages
-sudo apt update
-sudo apt install -y git curl python3-pip python3-venv
-```
-
-## Transcript (continued)
-
-Good, Python 3.11 - we're good to go.
-
-Now let's clone the OpenClaw repository.
-
-## Steps to Follow
+### One-Line Install
 
 ```bash
-# Clone OpenClaw repo
-git clone https://github.com/anthropics/openclaw.git
-
-# Navigate into folder
-cd openclaw
-
-# Check what's inside
-ls -la
+curl -fsSL https://openclaw.ai/install.sh | bash
 ```
 
-## Transcript (continued)
-
-**[SCREEN: Show folder contents]**
-
-So you can see the structure here - we've got the main source code, configuration templates, and most importantly this install script.
-
-Let's run the installer.
-
-## Steps to Follow
+<details>
+<summary>📝 What the Installer Does</summary>
 
 ```bash
-# Run installer
-./scripts/install.sh
+# 1. Detects OS (Linux/macOS)
+# 2. Checks/installs Node.js v22+
+# 3. Installs build tools (make, g++, cmake, python3)
+# 4. Configures npm for user-local installs
+# 5. Installs OpenClaw npm package
+# 6. Runs setup wizard
+# 7. Installs systemd service
 ```
 
-## Transcript (continued)
+</details>
 
-**[SCREEN: Installer running]**
+<details>
+<summary>⚙️ Installation Wizard Options</summary>
 
-The installer is going to ask us a few questions. First one - provider. We're going with Anthropic since we want to use Claude.
+| Step | Prompt | Recommended Selection |
+|------|--------|----------------------|
+| 1 | Security warning | **Yes** |
+| 2 | Onboarding mode | **QuickStart** |
+| 3 | Model/auth provider | **vLLM** (local) or **Google** (cloud) |
+| 4 | vLLM base URL | `http://<LM_STUDIO_IP>:1234/v1` |
+| 5 | API Key | `lm-studio` or your API key |
+| 6 | Model | `qwen2.5-coder-3b-instruct` |
+| 7 | Default model | **Keep current** |
+| 8 | Gateway port | **18789** (default) |
+| 9 | Gateway bind | **Loopback (127.0.0.1)** |
+| 10 | Gateway auth | **Token** |
+| 11 | Tailscale exposure | **Off** |
+| 12 | Gateway token | **(blank - auto-generate)** |
+| 13 | Configure channels | **No** (skip for now) |
+| 14 | Configure skills | **No** (skip for now) |
+| 15 | Enable hooks | **Skip for now** |
+| 16 | Install Gateway service | **Yes** |
+| 17 | Gateway runtime | **Node** |
+| 18 | Hatch bot | **Do this later** |
 
-**[SCREEN: Provider selection]**
+</details>
 
-Now it's asking for the API key. You'll need to grab this from console.anthropic.com. Let me show you real quick.
-
-## Steps to Follow
-
-```
-# Get Anthropic API Key:
-1. Go to: console.anthropic.com
-2. Sign in or create account
-3. Go to API Keys section
-4. Create new key
-5. Copy the key (starts with sk-ant-)
-```
-
-## Transcript (continued)
-
-**[SCREEN: Paste API key - hide actual key]**
-
-I'll paste my key here... and we're good.
-
-Now it's asking about model selection. I'm going with Claude Sonnet for this demo - good balance of speed and capability. You can use Opus if you want the most powerful one, but it's more expensive.
-
-## Steps to Follow
-
-```
-# Model options:
-- claude-3-opus-20240229    (Most powerful, expensive)
-- claude-3-sonnet-20240229  (Balanced - recommended)
-- claude-3-haiku-20240229   (Fastest, cheapest)
-```
-
-## Transcript (continued)
-
-**[SCREEN: More configuration options]**
-
-For the other settings, I'm going to keep most defaults for now. We can always change these later in the config file.
-
-And... installation complete!
-
-Let me verify it's working.
-
-## Steps to Follow
+<details>
+<summary>🔧 Post-Installation: Fix PATH</summary>
 
 ```bash
-# Check OpenClaw installed
+# Add npm global bin to PATH
+echo 'export PATH="$HOME/.npm-global/bin:$PATH"' >> ~/.bashrc
+source ~/.bashrc
+
+# Verify installation
 openclaw --version
-
-# Or if using Python module
-python -m openclaw --version
+# Expected output: 2026.2.26
 ```
 
-## Transcript (continued)
-
-Perfect - OpenClaw is installed. But right now it's just the base framework. We need to connect it to a chat interface and add our NetBox tool.
+</details>
 
 ---
 
-# SECTION 3: CHAT INTEGRATION [7:00-10:00]
+## ⚙️ Configuration
 
-## Transcript
+### Configure Wizard
 
-**[SCREEN: Config file location]**
-
-So OpenClaw needs a way for us to talk to it, right? It supports a bunch of platforms - Slack, Discord, Telegram, Microsoft Teams - but it also has a built-in Web UI.
-
-For this demo, I'm going to show you both the Web UI for quick testing, and then Slack for the real setup.
-
-Let's start with the Web UI since it's the fastest way to test.
-
-## Steps to Follow
+<details>
+<summary>1. Full Configuration Wizard</summary>
 
 ```bash
-# Start OpenClaw with Web UI
-openclaw gateway --web-ui
-
-# Or
-python -m openclaw gateway --web-ui
+openclaw configure
 ```
 
-## Transcript (continued)
+Interactive wizard for all settings.
 
-**[SCREEN: Terminal showing startup]**
+</details>
 
-You can see it's starting up... and there we go - it says Web UI available at localhost:3000.
-
-Let me open that in the browser.
-
-**[SCREEN: Browser - OpenClaw Web UI]**
-
-And here's our OpenClaw dashboard. Pretty clean interface. We can see the overview, sessions, and there's a chat interface right here.
-
-Let me just do a quick test.
-
-**[SCREEN: Type in chat]**
-
-"Hi, are you working?"
-
-**[SCREEN: Response appearing]**
-
-And we got a response! So the base installation is working. But right now, it doesn't have any tools - it can't actually DO anything useful yet.
-
-Now let me quickly show you the Slack setup, because that's probably what you'll want for real use.
-
-## Steps to Follow
-
-```
-# Slack Setup Steps:
-
-1. Go to: api.slack.com/apps
-2. Click "Create New App"
-3. Choose "From scratch"
-4. Name: "OpenClaw" (or whatever)
-5. Select your workspace
-
-6. Under "OAuth & Permissions":
-   - Add Bot Token Scopes:
-     - chat:write
-     - channels:read
-     - channels:history
-     - app_mentions:read
-   - Install to Workspace
-   - Copy "Bot User OAuth Token" (starts with xoxb-)
-
-7. Under "Socket Mode":
-   - Enable Socket Mode
-   - Create App-Level Token (name: "openclaw")
-   - Copy this token (starts with xapp-)
-
-8. Under "Event Subscriptions":
-   - Enable Events
-   - Subscribe to bot events:
-     - app_mention
-     - message.channels
-```
-
-## Transcript (continued)
-
-**[SCREEN: Show Slack app creation briefly]**
-
-I'm not going to go through every click here, but basically you create a Slack app, get two tokens - the bot token and app token - and add them to OpenClaw config.
-
-## Steps to Follow
+<details>
+<summary>2. Configure Specific Sections</summary>
 
 ```bash
-# Edit OpenClaw config
-nano ~/.config/openclaw/config.json
+# Model configuration only
+openclaw configure --section model
+
+# Web search configuration
+openclaw configure --section web
+
+# Channel configuration (Slack, Discord, etc.)
+openclaw configure --section channels
 ```
+
+</details>
+
+<details>
+<summary>3. Get/Set Config Values</summary>
+
+```bash
+# Get a config value
+openclaw config get gateway.auth.token
+openclaw config get agents.defaults.model.primary
+
+# Set a config value
+openclaw config set agents.defaults.model.primary "qwen2.5-coder-3b-instruct"
+
+# Remove a config value
+openclaw config unset some.config.key
+```
+
+</details>
+
+<details>
+<summary>4. View Full Config</summary>
+
+```bash
+# View entire config
+cat ~/.openclaw/openclaw.json
+
+# Pretty print
+cat ~/.openclaw/openclaw.json | python3 -m json.tool
+
+# Validate JSON syntax
+cat ~/.openclaw/openclaw.json | python3 -m json.tool > /dev/null && echo "Valid JSON"
+```
+
+</details>
+
+---
+
+## 🔄 Service Management
+
+### Systemd Commands
+
+<details>
+<summary>1. Check Status</summary>
+
+```bash
+systemctl --user status openclaw-gateway
+
+# Expected output:
+# ● openclaw-gateway.service - OpenClaw Gateway (v2026.2.26)
+#      Active: active (running)
+```
+
+</details>
+
+<details>
+<summary>2. Start / Stop / Restart</summary>
+
+```bash
+# Start gateway
+systemctl --user start openclaw-gateway
+
+# Stop gateway
+systemctl --user stop openclaw-gateway
+
+# Restart gateway (after config changes)
+systemctl --user restart openclaw-gateway
+```
+
+</details>
+
+<details>
+<summary>3. Enable / Disable on Boot</summary>
+
+```bash
+# Enable on boot
+systemctl --user enable openclaw-gateway
+
+# Disable on boot
+systemctl --user disable openclaw-gateway
+```
+
+</details>
+
+<details>
+<summary>4. Reload After Config Changes</summary>
+
+```bash
+# Reload systemd daemon
+systemctl --user daemon-reload
+
+# Then restart gateway
+systemctl --user restart openclaw-gateway
+```
+
+</details>
+
+<details>
+<summary>5. Manual Gateway Control</summary>
+
+```bash
+# Start gateway manually (foreground)
+openclaw gateway
+
+# Stop gateway
+openclaw gateway stop
+```
+
+</details>
+
+---
+
+## 🌐 Web UI / Dashboard
+
+<details>
+<summary>1. Open Dashboard</summary>
+
+```bash
+# Opens browser automatically
+openclaw dashboard
+
+# Get URL without opening browser
+openclaw dashboard --no-open
+```
+
+</details>
+
+<details>
+<summary>2. Access URLs</summary>
+
+```
+Web UI:           http://127.0.0.1:18789/
+Web UI (token):   http://127.0.0.1:18789/#token=YOUR_TOKEN_HERE
+Gateway WS:       ws://127.0.0.1:18789
+```
+
+</details>
+
+<details>
+<summary>3. Get Gateway Token</summary>
+
+```bash
+# Get current token
+openclaw config get gateway.auth.token
+
+# Note: Shows __OPENCLAW_REDACTED__ for security
+# Check config file directly:
+cat ~/.openclaw/openclaw.json | grep -A1 '"token"'
+```
+
+</details>
+
+<details>
+<summary>4. Generate New Token</summary>
+
+```bash
+openclaw doctor --generate-gateway-token
+```
+
+</details>
+
+<details>
+<summary>5. Chat Commands (in Web UI)</summary>
+
+| Command | Action |
+|---------|--------|
+| `/new` | Start new session |
+| `/reset` | Reset conversation |
+| `/models` | List available models |
+| `/help` | Show help |
+
+</details>
+
+---
+
+## 🤖 Model Providers
+
+### Cloud Providers
+
+<details>
+<summary>1. Google Gemini (Free Tier Available)</summary>
+
+```bash
+# Get API key from: https://aistudio.google.com
+
+# Configure
+openclaw configure --section model
+
+# Select:
+# Provider: Google
+# API Key: <paste your key>
+# Model: google/gemini-2.5-flash (recommended)
+```
+
+**Free Tier Limits:**
+- ~60 requests/minute
+- ~1500 requests/day
+
+</details>
+
+<details>
+<summary>2. Anthropic Claude</summary>
+
+```bash
+# Get API key from: https://console.anthropic.com
+
+# Configure
+openclaw configure --section model
+
+# Select:
+# Provider: Anthropic
+# API Key: <paste your key>
+# Model: anthropic/claude-sonnet-4-6
+
+# Note: Requires API credits ($5 minimum)
+```
+
+</details>
+
+<details>
+<summary>3. OpenAI</summary>
+
+```bash
+# Get API key from: https://platform.openai.com
+
+# Configure
+openclaw configure --section model
+
+# Select:
+# Provider: OpenAI
+# API Key: <paste your key>
+# Model: openai/gpt-4o
+
+# Note: Requires API credits
+```
+
+</details>
+
+### Local LLM (LM Studio)
+
+<details>
+<summary>1. LM Studio Setup (Windows/Mac)</summary>
+
+```bash
+# 1. Download LM Studio from: https://lmstudio.ai
+
+# 2. Load a model (recommended):
+#    - qwen2.5-coder-3b-instruct (fast, small)
+#    - qwen2.5-coder-7b-instruct (balanced)
+
+# 3. Go to Developer tab
+
+# 4. Configure Server Settings:
+#    - Context Length: 16384 (IMPORTANT - minimum required)
+#    - Enable: "Serve on Local Network"
+
+# 5. Click "Start Server"
+
+# 6. Note the IP address (e.g., 192.168.1.100)
+```
+
+</details>
+
+<details>
+<summary>2. Configure OpenClaw for LM Studio</summary>
+
+```bash
+# Run configure wizard
+openclaw configure --section model
+
+# Select these options:
+# Provider: vLLM
+# vLLM base URL: http://192.168.1.100:1234/v1  (your LM Studio IP)
+# API Key: lm-studio
+# Model: qwen2.5-coder-3b-instruct
+
+# Restart gateway
+systemctl --user restart openclaw-gateway
+```
+
+</details>
+
+<details>
+<summary>3. Test LM Studio Connection</summary>
+
+```bash
+# From your Linux machine:
+curl http://192.168.1.100:1234/v1/models
+
+# Expected output:
+{
+  "data": [
+    {
+      "id": "qwen2.5-coder-3b-instruct",
+      "object": "model",
+      "owned_by": "organization_owner"
+    }
+  ],
+  "object": "list"
+}
+```
+
+</details>
+
+<details>
+<summary>4. LM Studio Recommended Settings</summary>
+
+| Setting | Value | Notes |
+|---------|-------|-------|
+| **Context Length** | 16384 | Minimum for OpenClaw (large system prompt) |
+| **GPU Offload** | Max available | More = faster |
+| **Serve on Local Network** | Enabled | Required for remote access |
+| **Model** | qwen2.5-coder-3b-instruct | Best balance speed/quality |
+
+</details>
+
+---
+
+## 📁 Configuration Files
+
+### Main Config File
+
+<details>
+<summary>Location & Structure</summary>
+
+**Location:** `~/.openclaw/openclaw.json`
 
 ```json
 {
-  "provider": "anthropic",
-  "model": "claude-3-sonnet-20240229",
-  "chat": {
-    "platform": "slack",
-    "slack": {
-      "bot_token": "xoxb-your-bot-token",
-      "app_token": "xapp-your-app-token"
+  "wizard": {
+    "lastRunAt": "2026-02-27T16:17:26.098Z",
+    "lastRunVersion": "2026.2.26"
+  },
+  "auth": {
+    "profiles": {
+      "vllm:default": {
+        "provider": "vllm",
+        "mode": "api_key"
+      }
+    }
+  },
+  "agents": {
+    "defaults": {
+      "model": {
+        "primary": "vllm/qwen2.5-coder-3b-instruct"
+      },
+      "workspace": "/home/user/.openclaw/workspace",
+      "maxConcurrent": 4
+    }
+  },
+  "gateway": {
+    "port": 18789,
+    "mode": "local",
+    "bind": "loopback",
+    "auth": {
+      "mode": "token",
+      "token": "your-token-here"
     }
   }
 }
 ```
 
-## Transcript (continued)
+</details>
 
-Once you save that and restart OpenClaw, you can mention @OpenClaw in any Slack channel and it'll respond.
+### Systemd Service Override
 
-But for the rest of this demo, I'll use the Web UI to keep things simple.
+<details>
+<summary>Add Environment Variables</summary>
+
+**Location:** `~/.config/systemd/user/openclaw-gateway.service.d/override.conf`
+
+```bash
+# Create directory
+mkdir -p ~/.config/systemd/user/openclaw-gateway.service.d/
+
+# Create override file
+nano ~/.config/systemd/user/openclaw-gateway.service.d/override.conf
+```
+
+**Content:**
+
+```ini
+[Service]
+Environment="OPENAI_BASE_URL=http://192.168.1.100:1234/v1"
+Environment="OPENAI_API_BASE=http://192.168.1.100:1234/v1"
+Environment="OPENAI_API_KEY=lm-studio"
+```
+
+**Apply changes:**
+
+```bash
+systemctl --user daemon-reload
+systemctl --user restart openclaw-gateway
+```
+
+</details>
+
+### Key Directories
+
+<details>
+<summary>Directory Structure</summary>
+
+```bash
+~/.openclaw/
+├── openclaw.json           # Main config
+├── openclaw.json.bak       # Config backup
+├── workspace/              # Agent workspace
+│   └── skills/             # Custom skills
+└── agents/
+    └── main/
+        └── sessions/       # Session history
+            └── sessions.json
+
+~/.config/systemd/user/
+├── openclaw-gateway.service
+└── openclaw-gateway.service.d/
+    └── override.conf       # Environment overrides
+
+/tmp/openclaw/
+└── openclaw-YYYY-MM-DD.log # Daily log files
+```
+
+</details>
 
 ---
 
-# SECTION 4: NETBOX MCP SETUP [10:00-14:00]
+## 🔌 MCP Integration
 
-## Transcript
+### NetBox MCP Example
 
-**[SCREEN: Back to terminal]**
-
-Alright, now for the fun part - adding NetBox as a tool. This is where MCP comes in.
-
-MCP stands for Model Context Protocol. It's basically a standard way for AI agents to connect to external tools and services.
-
-There's an official NetBox MCP package that we can install. Let me show you.
-
-## Steps to Follow
+<details>
+<summary>1. Install NetBox MCP</summary>
 
 ```bash
-# Install NetBox MCP package
 pip install netbox-mcp
-
-# Or using uv (faster)
-uv pip install netbox-mcp
-
-# Verify installation
-pip show netbox-mcp
 ```
 
-## Transcript (continued)
+</details>
 
-Package installed. Now we need to tell OpenClaw to use it.
+<details>
+<summary>2. Add to OpenClaw Config</summary>
 
-Let's edit the config file.
-
-## Steps to Follow
-
-```bash
-# Open config file
-nano ~/.config/openclaw/config.json
-```
-
-## Transcript (continued)
-
-**[SCREEN: Config file open]**
-
-So in the config file, there's a section called mcpServers. This is where we register all our tools.
-
-I'm going to add NetBox here.
-
-## Steps to Follow
+Edit `~/.openclaw/openclaw.json`:
 
 ```json
 {
-  "provider": "anthropic",
-  "model": "claude-3-sonnet-20240229",
   "mcpServers": {
     "netbox": {
       "command": "uvx",
       "args": ["netbox-mcp"],
       "env": {
-        "NETBOX_URL": "http://your-netbox-ip:8000",
-        "NETBOX_TOKEN": "your-netbox-api-token"
+        "NETBOX_URL": "http://your-netbox:8000",
+        "NETBOX_TOKEN": "your-api-token"
       }
     }
   }
 }
 ```
 
-## Transcript (continued)
+</details>
 
-**[SCREEN: Editing config]**
-
-Let me break this down:
-
-- `command` and `args` - this tells OpenClaw how to run the MCP server
-- `NETBOX_URL` - your NetBox instance URL, make sure to include the port
-- `NETBOX_TOKEN` - your API token from NetBox
-
-Let me grab my NetBox API token real quick.
-
-## Steps to Follow
-
-```
-# Get NetBox API Token:
-1. Log into NetBox
-2. Click your username (top right)
-3. Go to "API Tokens"
-4. Create new token
-5. Copy the token
-```
-
-## Transcript (continued)
-
-**[SCREEN: NetBox UI showing token]**
-
-I'll paste in my NetBox URL and token... save the file.
-
-Now let's restart OpenClaw to pick up the new config.
-
-## Steps to Follow
+<details>
+<summary>3. Restart and Test</summary>
 
 ```bash
-# Stop OpenClaw if running (Ctrl+C)
+# Restart gateway
+systemctl --user restart openclaw-gateway
 
-# Start again
-openclaw gateway --web-ui
+# Open dashboard
+openclaw dashboard
+
+# Test in chat:
+# "Show me all devices in NetBox"
+# "List routers in site DC1"
 ```
 
-## Transcript (continued)
-
-**[SCREEN: Startup logs]**
-
-Watch the startup logs here... and there we go - you can see it says "Loaded MCP server: netbox". That means it's connected.
-
-Let's test it!
-
-**[SCREEN: Web UI chat]**
-
-I'll type: "List all devices from NetBox"
-
-**[SCREEN: Response with devices]**
-
-And look at that - it's actually querying NetBox and showing me the devices! We've got our routers and switches from the lab.
-
-Let me try something else: "What sites are configured in NetBox?"
-
-**[SCREEN: Sites response]**
-
-Beautiful - it shows the sites. The NetBox MCP tool is working.
-
-Now let me try a write operation: "Create a new site called 'Test-Lab' in NetBox"
-
-**[SCREEN: Create site response]**
-
-And it created it! Let me verify in NetBox...
-
-**[SCREEN: NetBox UI showing new site]**
-
-There it is - Test-Lab site, created by our AI agent. This is pretty powerful stuff, right?
+</details>
 
 ---
 
-# SECTION 5: CREATE CUSTOM SKILL [14:00-18:00]
+## 📚 Skills
 
-## Transcript
+### Skill File Structure
 
-**[SCREEN: Terminal]**
+<details>
+<summary>Create Custom Skill</summary>
 
-Okay, so we've got the tool working. The AI can query and update NetBox. But right now, we're just asking simple questions.
-
-What if we want the AI to perform a specific workflow? That's where Skills come in.
-
-Let me show you how to create a custom skill from scratch.
-
-## Steps to Follow
-
-```bash
-# Navigate to skills folder
-cd ~/.config/openclaw/skills
-
-# Or create if doesn't exist
-mkdir -p ~/.config/openclaw/skills
-cd ~/.config/openclaw/skills
-
-# Check existing skills
-ls -la
-```
-
-## Transcript (continued)
-
-**[SCREEN: Skills folder]**
-
-So skills are just YAML files that define what the AI should do. Let me create a simple one.
-
-I'm going to create an "inventory audit" skill - something that checks NetBox for devices with missing information.
-
-## Steps to Follow
-
-```bash
-# Create new skill file
-nano inventory_audit.yaml
-```
-
-## Transcript (continued)
-
-**[SCREEN: Empty file]**
-
-Now let me write the skill definition.
-
-## Steps to Follow
+**Location:** `~/.openclaw/workspace/skills/inventory_audit.yaml`
 
 ```yaml
-# inventory_audit.yaml
 name: inventory_audit
-description: "Audit NetBox inventory for missing or incomplete device information"
+description: "Audit NetBox inventory for missing information"
 version: "1.0"
 
 trigger:
   - "audit inventory"
-  - "check netbox devices"
+  - "check my infrastructure"
   - "inventory health check"
 
 tools:
   - netbox
 
 instructions: |
-  When the user asks to audit inventory, perform these steps:
-  
+  When user asks to audit inventory:
   1. Query all devices from NetBox
-  2. For each device, check for:
-     - Missing primary IP address
-     - Missing site assignment
-     - Missing device role
-     - Missing platform
-  3. Compile a summary report showing:
+  2. Check for missing: primary IP, site, device role, platform
+  3. Compile summary report:
      - Total devices checked
-     - Devices with issues (list each one)
-     - Devices that are complete
-  4. Provide recommendations for fixing issues
-  
-  Be thorough but present the information clearly.
-  Use tables or lists to make it readable.
+     - Devices with issues (list each)
+     - Devices complete
+  4. Provide actionable recommendations
+  5. Offer to fix issues if user approves
 
 examples:
   - user: "audit my inventory"
-    assistant: "I'll check all devices in NetBox for completeness..."
+    assistant: "I'll check all devices for completeness..."
 ```
 
-## Transcript (continued)
+</details>
 
-**[SCREEN: Skill file written]**
+---
 
-Let me walk through what we just wrote:
+## 🔧 Troubleshooting
 
-- `name` - unique identifier for the skill
-- `description` - what it does, helps the AI understand when to use it
-- `trigger` - phrases that activate this skill
-- `tools` - which MCP tools this skill needs (netbox in our case)
-- `instructions` - the actual workflow, step by step
-- `examples` - helps the AI understand the expected behavior
+### Doctor Command
 
-Save that... and let's restart OpenClaw to load the new skill.
-
-## Steps to Follow
+<details>
+<summary>Run Diagnostics</summary>
 
 ```bash
-# Restart OpenClaw
-# Ctrl+C to stop, then:
-openclaw gateway --web-ui
+# Run diagnostics
+openclaw doctor
+
+# Fix common issues
+openclaw doctor --fix
+
+# Generate new gateway token
+openclaw doctor --generate-gateway-token
 ```
 
-## Transcript (continued)
+</details>
 
-**[SCREEN: Startup logs]**
+### Security Audit
 
-And in the logs... there - "Loaded skill: inventory_audit". 
-
-Let's test it out.
-
-**[SCREEN: Web UI]**
-
-I'll type: "audit my inventory"
-
-**[SCREEN: AI processing]**
-
-Watch this - it's thinking, it knows to use the inventory_audit skill, it's querying NetBox...
-
-**[SCREEN: Audit results]**
-
-And here's our audit report! Look at this:
-- Total devices: 4
-- Devices with issues: 2 (Router-2 missing primary IP, Switch-1 missing platform)
-- Complete devices: 2
-
-And it's giving recommendations on how to fix each issue. That's exactly what we defined in the skill.
-
-This is the power of skills - you define the workflow once, and the AI executes it whenever you ask.
-
----
-
-# SECTION 6: END-TO-END TESTING [18:00-21:00]
-
-## Transcript
-
-**[SCREEN: Web UI]**
-
-Alright, let's do a complete end-to-end test to make sure everything is working together.
-
-I'm going to simulate a real workflow - like something you'd actually do in your day-to-day.
-
-**Test 1: Basic Query**
-
-"Show me all routers in NetBox"
-
-**[SCREEN: Response]**
-
-Got our routers listed.
-
-**Test 2: Create Something**
-
-"Add a new device called 'Test-Switch-01', device type should be Cisco Catalyst, site is Test-Lab"
-
-**[SCREEN: Response]**
-
-Created! Let me verify in NetBox...
-
-**[SCREEN: NetBox showing new device]**
-
-There it is.
-
-**Test 3: Run Our Custom Skill**
-
-"Audit my inventory"
-
-**[SCREEN: Audit running]**
-
-And it's running our audit skill again - now it should include the new device we just created...
-
-**[SCREEN: Updated audit]**
-
-And look - it found our Test-Switch-01 is missing primary IP and platform. The skill is working perfectly.
-
-**Test 4: Fix Based on Recommendation**
-
-"Update Test-Switch-01 with primary IP 192.168.1.100 and platform IOS"
-
-**[SCREEN: Update response]**
-
-Done. Now let's run the audit one more time...
-
-"Audit inventory"
-
-**[SCREEN: Clean audit]**
-
-And now Test-Switch-01 shows as complete. We just used AI to identify and fix inventory issues.
-
-## Quick Summary Table
-
-| Test | Command | Result |
-|------|---------|--------|
-| Basic Query | "Show all routers" | ✅ Listed devices |
-| Create | "Add new device..." | ✅ Device created |
-| Custom Skill | "Audit inventory" | ✅ Report generated |
-| Update | "Update device with IP..." | ✅ Device updated |
-
----
-
-# SECTION 7: WRAP UP [21:00-22:00]
-
-## Transcript
-
-**[SCREEN: Architecture diagram recap]**
-
-Alright, let's wrap this up.
-
-So today we built an AI agent from scratch using OpenClaw. We connected it to NetBox using MCP, and we created a custom skill to audit our inventory.
-
-Think about what we just did:
-- We can chat naturally with an AI about our network
-- It can query and update NetBox automatically
-- We can define custom workflows as skills
-- All of this runs locally or in your own infrastructure
-
-This is the AI layer on top of our GitOps pipeline. In the previous videos we had AWX running playbooks, NetBox as source of truth, GitHub syncing everything. Now we have an AI that can interact with all of that using natural language.
-
-**[SCREEN: What's next slide]**
-
-In the next video, I'm thinking we could expand this - maybe add more MCP tools like ServiceNow, or build more advanced skills that actually trigger AWX job templates. Let me know in the comments what you'd like to see.
-
-If you found this useful, please like the video and subscribe. The OpenClaw repo link and all the config files will be in the pinned comment.
-
-Thanks for watching, and I'll see you in the next one. Take care!
-
----
-
-# QUICK REFERENCE
-
-## Installation Commands
+<details>
+<summary>Security Commands</summary>
 
 ```bash
-# Prerequisites
-sudo apt update
-sudo apt install -y git curl python3-pip python3-venv
+# Deep security scan
+openclaw security audit --deep
 
-# Clone OpenClaw
-git clone https://github.com/anthropics/openclaw.git
-cd openclaw
-
-# Install
-./scripts/install.sh
-
-# Install NetBox MCP
-pip install netbox-mcp
+# Auto-fix security issues
+openclaw security audit --fix
 ```
 
-## Config File Location
+</details>
 
-```
-~/.config/openclaw/config.json
-```
+### Common Checks
 
-## Config File Template
-
-```json
-{
-  "provider": "anthropic",
-  "model": "claude-3-sonnet-20240229",
-  "api_key": "sk-ant-your-key-here",
-  "mcpServers": {
-    "netbox": {
-      "command": "uvx",
-      "args": ["netbox-mcp"],
-      "env": {
-        "NETBOX_URL": "http://your-netbox:8000",
-        "NETBOX_TOKEN": "your-token"
-      }
-    }
-  }
-}
-```
-
-## Skill File Template
-
-```yaml
-name: skill_name
-description: "What this skill does"
-version: "1.0"
-
-trigger:
-  - "phrase that activates"
-  - "another phrase"
-
-tools:
-  - netbox
-
-instructions: |
-  Step by step instructions for the AI...
-
-examples:
-  - user: "example input"
-    assistant: "example response"
-```
-
-## Common Commands
+<details>
+<summary>Verification Commands</summary>
 
 ```bash
-# Start with Web UI
-openclaw gateway --web-ui
+# Check if gateway is running
+systemctl --user status openclaw-gateway
 
-# Start with Slack
-openclaw gateway --slack
+# Check OpenClaw version
+openclaw --version
 
-# Check logs
-tail -f ~/.config/openclaw/logs/openclaw.log
+# Test LLM connection (for local LLM)
+curl http://<LLM_IP>:1234/v1/models
 
-# List installed MCP tools
-openclaw tools list
+# Check config file syntax
+cat ~/.openclaw/openclaw.json | python3 -m json.tool
+
+# Check gateway logs
+journalctl --user -u openclaw-gateway -n 20
 ```
 
-## Troubleshooting
-
-| Issue | Cause | Fix |
-|-------|-------|-----|
-| MCP not loading | Package missing | `pip install netbox-mcp` |
-| Connection refused | Wrong URL | Include http:// and port |
-| 403 error | Bad token | Check NetBox token permissions |
-| Skill not triggering | Not loaded | Restart OpenClaw |
-| Slow responses | Model size | Try claude-3-haiku |
+</details>
 
 ---
 
-# PINNED COMMENT
+## 📜 Logs
 
+<details>
+<summary>1. View Gateway Logs</summary>
+
+```bash
+# Recent logs (last 50 lines)
+journalctl --user -u openclaw-gateway -n 50
+
+# Follow logs in real-time
+journalctl --user -u openclaw-gateway -f
+
+# Logs since today
+journalctl --user -u openclaw-gateway --since today
+
+# Logs with full output (no truncation)
+journalctl --user -u openclaw-gateway -n 100 --no-pager
 ```
-📌 RESOURCES & CONFIG FILES
 
-🔗 Links:
-• OpenClaw: https://github.com/anthropics/openclaw
-• NetBox MCP: https://pypi.org/project/netbox-mcp
-• Anthropic Console: https://console.anthropic.com
+</details>
 
-📄 Config File (~/.config/openclaw/config.json):
-{
-  "provider": "anthropic",
-  "model": "claude-3-sonnet-20240229",
-  "mcpServers": {
-    "netbox": {
-      "command": "uvx",
-      "args": ["netbox-mcp"],
-      "env": {
-        "NETBOX_URL": "http://your-netbox:8000",
-        "NETBOX_TOKEN": "your-token"
-      }
-    }
-  }
-}
+<details>
+<summary>2. Log File Location</summary>
 
-📝 Skill Template (inventory_audit.yaml):
-name: inventory_audit
-description: "Audit NetBox inventory"
-trigger:
-  - "audit inventory"
-tools:
-  - netbox
-instructions: |
-  1. Query all devices
-  2. Check for missing info
-  3. Report summary
+```bash
+# OpenClaw writes logs to:
+cat /tmp/openclaw/openclaw-$(date +%Y-%m-%d).log
 
-⌨️ Commands:
-• Start: openclaw gateway --web-ui
-• Install NetBox MCP: pip install netbox-mcp
-
-Drop a comment if you have questions! 👇
+# List all log files
+ls -la /tmp/openclaw/
 ```
+
+</details>
+
+<details>
+<summary>3. Debug Specific Issues</summary>
+
+```bash
+# Check for model errors
+journalctl --user -u openclaw-gateway | grep -i "error\|fail"
+
+# Check model being used
+journalctl --user -u openclaw-gateway | grep "agent model"
+
+# Check connection issues
+journalctl --user -u openclaw-gateway | grep -i "connect\|timeout"
+```
+
+</details>
 
 ---
 
-# THUMBNAIL PROMPTS
+## 🗑️ Uninstallation
 
-## Prompt 1: "OPENCLAW + NETBOX"
+<details>
+<summary>Complete Removal</summary>
 
+```bash
+# Step 1: Stop services
+openclaw gateway stop
+systemctl --user stop openclaw-gateway
+systemctl --user disable openclaw-gateway
+
+# Step 2: Remove npm package
+npm uninstall -g openclaw
+
+# Step 3: Remove config and data
+rm -rf ~/.openclaw
+rm -rf ~/.config/systemd/user/openclaw-gateway.service
+rm -rf ~/.config/systemd/user/openclaw-gateway.service.d
+
+# Step 4: Reload systemd
+systemctl --user daemon-reload
+
+# Step 5: Verify removal
+openclaw --version
+# Expected: command not found
 ```
-Clean whiteboard style YouTube thumbnail, white background, hand-drawn marker aesthetic. No human faces.
 
-Title: "OPENCLAW + NETBOX" in bold black marker
-Subtitle: "AI Network Agent" in blue
+</details>
 
-Center visual - Three layer stack:
-- Top: Brain icon labeled "Skills"
-- Middle: Wrench icon labeled "MCP Tools"
-- Bottom: Chip icon labeled "LLM (Claude)"
-Arrow pointing to NetBox logo
+<details>
+<summary>Keep Config, Remove Package Only</summary>
 
-Right side - Chat bubble:
-"Audit my inventory" → Results list
+```bash
+# Remove package only (keeps config)
+npm uninstall -g openclaw
 
-Corner badge: "PART 4" in red
-
-Style: Whiteboard marker sketch, black/blue/red ink, 1280x720
+# Reinstall later:
+curl -fsSL https://openclaw.ai/install.sh | bash
+# Config will be detected and preserved
 ```
 
-## Prompt 2: "AI AGENT FOR NETBOX"
-
-```
-Clean whiteboard style YouTube thumbnail, white background. No human faces.
-
-Title: "AI AGENT" in bold black
-Subtitle: "For Network Automation" in yellow highlight
-
-Center visual - Flow diagram:
-[Chat bubble] → [OpenClaw logo] → [NetBox logo]
-With bidirectional arrows
-
-Below: Three skill icons
-- "Query" magnifying glass
-- "Create" plus sign
-- "Audit" checklist
-
-Bottom text: "Natural Language → Network Actions"
-
-Style: Hand-drawn whiteboard, marker pen look, 1280x720
-```
+</details>
 
 ---
 
-# ARROW STYLE TITLES
+## ❌ Common Issues & Solutions
 
-**Option A:**
-```
-OpenClaw → NetBox MCP → AI-Powered Inventory Management
+<details>
+<summary>Issue 1: "Command not found"</summary>
+
+**Problem:** `openclaw: command not found`
+
+**Cause:** PATH not updated after installation
+
+**Solution:**
+```bash
+# Add to PATH
+echo 'export PATH="$HOME/.npm-global/bin:$PATH"' >> ~/.bashrc
+source ~/.bashrc
+
+# Verify
+openclaw --version
 ```
 
-**Option B:**
-```
-Chat → AI Agent → NetBox: Build Network Automation Brain
+</details>
+
+<details>
+<summary>Issue 2: Gateway Offline / Disconnected</summary>
+
+**Problem:** Web UI shows "Health Offline" or "Disconnected"
+
+**Cause:** Gateway not running or token mismatch
+
+**Solution:**
+```bash
+# Check status
+systemctl --user status openclaw-gateway
+
+# Restart
+systemctl --user restart openclaw-gateway
+
+# Use token URL
+openclaw dashboard
 ```
 
-**Option C:**
+</details>
+
+<details>
+<summary>Issue 3: "Cannot truncate prompt" Error</summary>
+
+**Problem:** `Cannot truncate prompt with n_keep (14663) >= n_ctx (4096)`
+
+**Cause:** LM Studio context window too small for OpenClaw's system prompt
+
+**Solution:**
+1. Open LM Studio
+2. Go to Developer → Server Settings
+3. Increase **Context Length** to **16384** or higher
+4. Reload model
+5. Restart server
+
+</details>
+
+<details>
+<summary>Issue 4: Client Timeout Loop (Local LLM)</summary>
+
+**Problem:** Processing keeps restarting, never completes. Logs show:
 ```
-LLM + MCP Tools + Skills = Intelligent Network Agent
+Client disconnected. Stopping generation...
+Progress: 31.3% → Reset to 0.0%
 ```
 
-**Option D:**
+**Cause:** OpenClaw times out while waiting for slow local LLM
+
+**Solutions:**
+1. Use smaller model (3B instead of 7B)
+2. Increase GPU offload in LM Studio
+3. Use cloud API instead (Gemini free tier)
+4. Don't refresh browser while processing
+
+</details>
+
+<details>
+<summary>Issue 5: "Incorrect API Key" Error</summary>
+
+**Problem:** `401 Incorrect API key provided: lm-studio`
+
+**Cause:** Using OpenAI provider but pointing to local LLM
+
+**Solution:**
+```bash
+# Reconfigure with vLLM provider
+openclaw configure --section model
+
+# Select: vLLM (not OpenAI)
+# This properly handles local LLM endpoints
 ```
-Natural Language → Network Actions: OpenClaw + NetBox Setup
+
+</details>
+
+<details>
+<summary>Issue 6: Rate Limit (429 Too Many Requests)</summary>
+
+**Problem:** Gemini API rate limited
+
+**Cause:** Exceeded free tier limits
+
+**Solutions:**
+1. Wait 1-2 minutes (rate limit resets)
+2. Use `gemini-2.5-flash-lite` (lower limits)
+3. Add billing to Google AI Studio
+4. Switch to different provider
+
+</details>
+
+<details>
+<summary>Issue 7: Config Validation Error</summary>
+
+**Problem:** `Unrecognized keys` or `Invalid config`
+
+**Cause:** Manual config edit with wrong keys
+
+**Solution:**
+```bash
+# Restore backup
+cp ~/.openclaw/openclaw.json.bak ~/.openclaw/openclaw.json
+
+# Or run doctor
+openclaw doctor --fix
+
+# Reconfigure
+openclaw configure
 ```
+
+</details>
 
 ---
 
-*Ready for Recording!*
+## 📋 Quick Reference Card
+
+### Essential Commands
+
+| Task | Command |
+|------|---------|
+| **Install** | `curl -fsSL https://openclaw.ai/install.sh \| bash` |
+| **Configure** | `openclaw configure` |
+| **Configure Model** | `openclaw configure --section model` |
+| **Start** | `systemctl --user start openclaw-gateway` |
+| **Stop** | `systemctl --user stop openclaw-gateway` |
+| **Restart** | `systemctl --user restart openclaw-gateway` |
+| **Status** | `systemctl --user status openclaw-gateway` |
+| **Dashboard** | `openclaw dashboard` |
+| **Logs (follow)** | `journalctl --user -u openclaw-gateway -f` |
+| **Logs (recent)** | `journalctl --user -u openclaw-gateway -n 50` |
+| **Version** | `openclaw --version` |
+| **Help** | `openclaw --help` |
+| **Doctor** | `openclaw doctor` |
+| **Doctor Fix** | `openclaw doctor --fix` |
+| **Uninstall** | `npm uninstall -g openclaw && rm -rf ~/.openclaw` |
+
+### Key File Locations
+
+| File | Location |
+|------|----------|
+| Main config | `~/.openclaw/openclaw.json` |
+| Config backup | `~/.openclaw/openclaw.json.bak` |
+| Workspace | `~/.openclaw/workspace/` |
+| Skills | `~/.openclaw/workspace/skills/` |
+| Sessions | `~/.openclaw/agents/main/sessions/` |
+| Systemd service | `~/.config/systemd/user/openclaw-gateway.service` |
+| Service override | `~/.config/systemd/user/openclaw-gateway.service.d/override.conf` |
+| Logs | `/tmp/openclaw/openclaw-YYYY-MM-DD.log` |
+
+### Web UI Chat Commands
+
+| Command | Action |
+|---------|--------|
+| `/new` | Start new session |
+| `/reset` | Reset conversation |
+| `/models` | List available models |
+| `/model <name>` | Switch model |
+| `/help` | Show help |
+
+---
+
+## 🔗 Resources
+
+| Resource | Link |
+|----------|------|
+| **Documentation** | [docs.openclaw.ai](https://docs.openclaw.ai) |
+| **Security Guide** | [docs.openclaw.ai/gateway/security](https://docs.openclaw.ai/gateway/security) |
+| **Showcase** | [openclaw.ai/showcase](https://openclaw.ai/showcase) |
+| **MCP Protocol** | [modelcontextprotocol.io](https://modelcontextprotocol.io) |
+| **LM Studio** | [lmstudio.ai](https://lmstudio.ai) |
+| **Google AI Studio** | [aistudio.google.com](https://aistudio.google.com) |
+| **Anthropic Console** | [console.anthropic.com](https://console.anthropic.com) |
+
+---
+
+## 📝 Changelog
+
+### v1.0 (2026-02-28)
+- ✅ Complete installation guide
+- ✅ vLLM/LM Studio integration
+- ✅ Google Gemini setup
+- ✅ Anthropic Claude setup
+- ✅ Systemd service management
+- ✅ Troubleshooting guide (7 issues)
+- ✅ MCP integration example
+- ✅ Skills documentation
+- ✅ Quick reference card
+
+---
+
+⭐ **If you find this helpful, please star the repo!** ⭐
