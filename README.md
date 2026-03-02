@@ -7,12 +7,11 @@
 [![OpenClaw](https://img.shields.io/badge/OpenClaw-v2026.3.1-red)](https://openclaw.ai)
 [![License](https://img.shields.io/badge/License-MIT-blue.svg)](LICENSE)
 [![Node](https://img.shields.io/badge/Node.js-22%2B-green)](https://nodejs.org)
-[![Platform](https://img.shields.io/badge/Platform-Linux%20%7C%20macOS-lightgrey)](https://openclaw.ai)
 
 ---
 
 <details>
-<summary><h2>📋 1. Prerequisites</h2></summary>
+<summary><strong>📋 Prerequisites</strong></summary>
 
 ### System Requirements
 
@@ -20,40 +19,29 @@
 |-------------|---------|-------------|
 | **OS** | Ubuntu 22.04 / macOS 12+ | Ubuntu 24.04 LTS |
 | **Node.js** | v22+ | v22.22+ |
-| **npm** | 10.x+ | 10.9.4+ |
 | **RAM** | 4GB | 8GB+ |
 | **Storage** | 2GB free | 5GB+ free |
 
-### LLM Provider Options
+### LLM Provider (Choose One)
 
 | Provider | Cost | Best For |
 |----------|------|----------|
-| **OpenRouter** | Free tier available | Beginners, multiple model access |
+| **OpenRouter** | Free tier available | Beginners, testing |
 | **Anthropic Claude** | Paid | Production, complex tasks |
 | **Google Gemini** | Free tier available | General use |
 | **LM Studio** | Free (local) | Privacy, offline use |
 
-### Verify System Requirements
+### Verify Prerequisites
 
 ```bash
-# Check OS version
+# Check OS
 hostnamectl
 
-# Check Node.js version (MUST be v22+)
+# Check Node.js (must be v22+)
 node -v
-# Expected: v22.22.0 or higher
 
-# Check npm version
+# Check npm
 npm -v
-# Expected: 10.9.4 or higher
-```
-
-### If Node.js < v22
-
-```bash
-# Install Node.js 22 via NodeSource
-curl -fsSL https://deb.nodesource.com/setup_22.x | sudo -E bash -
-sudo apt-get install -y nodejs
 ```
 
 </details>
@@ -61,9 +49,9 @@ sudo apt-get install -y nodejs
 ---
 
 <details>
-<summary><h2>🚀 2. Installation</h2></summary>
+<summary><strong>🚀 Installation</strong></summary>
 
-### Step 1: Run One-Line Installer
+### One-Line Install
 
 ```bash
 curl -fsSL https://openclaw.ai/install.sh | bash
@@ -76,21 +64,21 @@ curl -fsSL https://openclaw.ai/install.sh | bash
 3. ✅ Installs OpenClaw npm package globally
 4. ✅ Launches interactive setup wizard
 
-### Step 2: Setup Wizard Selections
+### Setup Wizard Selections
 
-| Prompt | Select | Notes |
-|--------|--------|-------|
-| Security warning | **Yes** | Acknowledge personal use |
-| Onboarding mode | **QuickStart** | Sets sensible defaults |
-| Model/auth provider | **OpenRouter** | Best for beginners |
-| API Key | Paste your key | From openrouter.ai/keys |
-| Default model | Enter manually | `openrouter/z-ai/glm-4.5-air:free` |
-| Configure channels | **Skip for now** | Add Telegram/Discord later |
-| Configure skills | **No** | Configure manually later |
-| Enable hooks | **Skip for now** | Advanced feature |
-| Hatch bot | **Do this later** | Set identity later |
+| Prompt | Recommended Selection |
+|--------|----------------------|
+| Security warning | **Yes** (acknowledge) |
+| Onboarding mode | **QuickStart** |
+| Model/auth provider | **OpenRouter** |
+| API Key | Paste your key |
+| Default model | `openrouter/z-ai/glm-4.5-air:free` |
+| Configure channels | **Skip for now** |
+| Configure skills | **No** |
+| Enable hooks | **Skip for now** |
+| Hatch bot | **Do this later** |
 
-### Step 3: Fix PATH (If Needed)
+### Post-Installation: Fix PATH
 
 ```bash
 # Add npm global bin to PATH
@@ -99,19 +87,18 @@ source ~/.bashrc
 
 # Verify installation
 openclaw --version
-# Expected: 2026.3.1
 ```
 
-### Step 4: Health Check
+### Health Check
 
 ```bash
 # Run diagnostics
 openclaw doctor
 
-# Auto-fix any issues
+# Auto-fix issues
 openclaw doctor --fix
 
-# Start the gateway service
+# Start gateway service
 openclaw daemon start
 ```
 
@@ -120,7 +107,7 @@ openclaw daemon start
 ---
 
 <details>
-<summary><h2>⚙️ 3. Configuration</h2></summary>
+<summary><strong>⚙️ Configuration</strong></summary>
 
 ### Config File Location
 
@@ -134,10 +121,7 @@ openclaw daemon start
 # View full config
 cat ~/.openclaw/openclaw.json
 
-# Pretty print
-cat ~/.openclaw/openclaw.json | python3 -m json.tool
-
-# Get specific values
+# View specific value
 openclaw config get agents.defaults.model.primary
 openclaw config get gateway.auth.token
 ```
@@ -155,41 +139,49 @@ openclaw config unset some.config.key
 ### Run Configuration Wizard
 
 ```bash
-# Full configuration wizard
+# Full configuration
 openclaw configure
 
-# Specific sections only
+# Specific sections
 openclaw configure --section model
 openclaw configure --section web
 openclaw configure --section channels
 ```
 
-### Add Environment Variables to Config
+### Example Config Structure
 
-```bash
-# Backup first
-cp ~/.openclaw/openclaw.json ~/.openclaw/openclaw.json.bak
-
-# Add env section using Python
-python3 << 'EOF'
-import json
-
-with open('/home/user/.openclaw/openclaw.json', 'r') as f:
-    config = json.load(f)
-
-config['env'] = {
+```json
+{
+  "auth": {
+    "profiles": {
+      "openrouter:default": {
+        "provider": "openrouter",
+        "mode": "api_key"
+      }
+    }
+  },
+  "agents": {
+    "defaults": {
+      "model": {
+        "primary": "openrouter/z-ai/glm-4.5-air:free"
+      },
+      "workspace": "/home/user/.openclaw/workspace"
+    }
+  },
+  "gateway": {
+    "port": 18789,
+    "mode": "local",
+    "bind": "loopback",
+    "auth": {
+      "mode": "token",
+      "token": "your-token-here"
+    }
+  },
+  "env": {
     "PATH": "/home/user/.local/bin:/home/user/.npm-global/bin:/usr/local/bin:/usr/bin:/bin",
     "MCPORTER_CONFIG": "/home/user/netbox-mcp-server/config/mcporter.json"
+  }
 }
-
-with open('/home/user/.openclaw/openclaw.json', 'w') as f:
-    json.dump(config, f, indent=2)
-
-print("✅ env section added!")
-EOF
-
-# Verify
-cat ~/.openclaw/openclaw.json | grep -A 4 '"env"'
 ```
 
 </details>
@@ -197,7 +189,7 @@ cat ~/.openclaw/openclaw.json | grep -A 4 '"env"'
 ---
 
 <details>
-<summary><h2>🔧 4. Service Management</h2></summary>
+<summary><strong>🔧 Service Management</strong></summary>
 
 ### Systemd Commands
 
@@ -211,7 +203,7 @@ systemctl --user start openclaw-gateway
 # Stop gateway
 systemctl --user stop openclaw-gateway
 
-# Restart gateway (required after config changes)
+# Restart gateway (use after config changes)
 systemctl --user restart openclaw-gateway
 
 # Enable on boot
@@ -237,22 +229,12 @@ openclaw daemon stop
 openclaw daemon restart
 ```
 
-### Check if Gateway is Running
-
-```bash
-# Quick status check
-systemctl --user is-active openclaw-gateway
-
-# Detailed status
-systemctl --user status openclaw-gateway
-```
-
 </details>
 
 ---
 
 <details>
-<summary><h2>🖥️ 5. Web UI / Dashboard</h2></summary>
+<summary><strong>🖥️ Web UI / Dashboard</strong></summary>
 
 ### Access Dashboard
 
@@ -282,17 +264,16 @@ openclaw config get gateway.auth.token
 openclaw doctor --generate-gateway-token
 ```
 
-### Dashboard Tabs Overview
+### Dashboard Tabs
 
 | Tab | Purpose |
 |-----|---------|
 | **Chat** | Direct conversation with AI agent |
-| **Overview** | Gateway health, WebSocket URL, uptime |
-| **Channels** | Configure Telegram, Discord, etc. |
-| **Agents** | Model config, workspace, skills filter |
-| **Skills** | View/search 51+ built-in skills |
-| **Config** | Edit configuration directly |
-| **Debug** | Real-time request/response logs |
+| **Overview** | Gateway health, connection status |
+| **Agents** | Model config, workspace settings |
+| **Skills** | View/manage available skills |
+| **Config** | Edit configuration |
+| **Debug** | Real-time request logs |
 
 ### Chat Commands
 
@@ -309,38 +290,32 @@ openclaw doctor --generate-gateway-token
 ---
 
 <details>
-<summary><h2>🤖 6. Model Providers</h2></summary>
+<summary><strong>🤖 Model Providers</strong></summary>
 
-### OpenRouter (Recommended)
+### OpenRouter (Recommended for Beginners)
 
 **Why OpenRouter?**
-- ✅ One API key for all models (Claude, GPT-4, Llama, Gemini)
-- ✅ Free models available
-- ✅ Easy to switch between models
-- ✅ No vendor lock-in
+- One API key for all models (Claude, GPT-4, Llama, etc.)
+- Free models available
+- Easy to switch between models
 
-**Setup Steps:**
+**Setup:**
 1. Go to [openrouter.ai](https://openrouter.ai)
 2. Sign up with Google/GitHub
-3. Navigate to **Keys** → **Create Key**
-4. Name it (e.g., `openclaw-lab`)
-5. Copy key (starts with `sk-or-v1-...`)
+3. Go to **Keys** → **Create Key**
+4. Copy key (starts with `sk-or-v1-...`)
 
 **Free Models:**
-```
-openrouter/z-ai/glm-4.5-air:free
-openrouter/meta-llama/llama-3.1-8b-instruct:free
-openrouter/google/gemma-2-9b-it:free
-openrouter/mistralai/mistral-7b-instruct:free
-```
+- `openrouter/z-ai/glm-4.5-air:free`
+- `openrouter/meta-llama/llama-3.1-8b-instruct:free`
+- `openrouter/google/gemma-2-9b-it:free`
+- `openrouter/mistralai/mistral-7b-instruct:free`
 
 **Paid Models (Better for Skills):**
-```
-openrouter/anthropic/claude-sonnet-4
-openrouter/openai/gpt-4o
-```
+- `openrouter/anthropic/claude-sonnet-4`
+- `openrouter/openai/gpt-4o`
 
-### Local LLM via LM Studio
+### Local LLM (LM Studio)
 
 ```bash
 # During configure, select:
@@ -363,105 +338,16 @@ openrouter/openai/gpt-4o
 curl http://<YOUR_IP>:1234/v1/models
 ```
 
-### Google Gemini
-
-```bash
-openclaw configure --section model
-# Select: Google
-# Enter API key from: https://aistudio.google.com/apikey
-# Model: google/gemini-2.5-flash
-```
-
 </details>
 
 ---
 
 <details>
-<summary><h2>📁 7. Configuration Files</h2></summary>
-
-### File Locations
-
-| File | Path |
-|------|------|
-| Main config | `~/.openclaw/openclaw.json` |
-| Config backup | `~/.openclaw/openclaw.json.bak` |
-| Workspace | `~/.openclaw/workspace/` |
-| Skills directory | `~/.openclaw/workspace/skills/` |
-| Sessions | `~/.openclaw/agents/main/sessions/` |
-| Systemd service | `~/.config/systemd/user/openclaw-gateway.service` |
-
-### Example Config Structure
-
-```json
-{
-  "wizard": {
-    "lastRunAt": "2026-03-02T14:02:46.733Z",
-    "lastRunVersion": "2026.3.1"
-  },
-  "auth": {
-    "profiles": {
-      "openrouter:default": {
-        "provider": "openrouter",
-        "mode": "api_key"
-      }
-    }
-  },
-  "agents": {
-    "defaults": {
-      "model": {
-        "primary": "openrouter/z-ai/glm-4.5-air:free"
-      },
-      "workspace": "/home/user/.openclaw/workspace",
-      "maxConcurrent": 4
-    }
-  },
-  "gateway": {
-    "port": 18789,
-    "mode": "local",
-    "bind": "loopback",
-    "auth": {
-      "mode": "token",
-      "token": "your-token-here"
-    }
-  },
-  "env": {
-    "PATH": "/home/user/.local/bin:/home/user/.npm-global/bin:/usr/local/bin:/usr/bin:/bin",
-    "MCPORTER_CONFIG": "/home/user/netbox-mcp-server/config/mcporter.json"
-  }
-}
-```
-
-### Backup and Restore Config
-
-```bash
-# Backup
-cp ~/.openclaw/openclaw.json ~/.openclaw/openclaw.json.bak
-
-# Restore
-cp ~/.openclaw/openclaw.json.bak ~/.openclaw/openclaw.json
-
-# Validate JSON syntax
-cat ~/.openclaw/openclaw.json | python3 -m json.tool
-```
-
-</details>
-
----
-
-<details>
-<summary><h2>🔌 8. MCP Integration</h2></summary>
+<summary><strong>🔌 MCP Integration (Model Context Protocol)</strong></summary>
 
 ### What is MCP?
 
-**MCP (Model Context Protocol)** is a standard protocol that lets AI models call external tools directly - like a plugin system for AI.
-
-| Aspect | Skills | MCP |
-|--------|--------|-----|
-| **What it is** | Markdown instructions | Tool protocol |
-| **How AI uses it** | Reads & executes commands | Calls tools directly |
-| **Setup complexity** | Easy (just .md file) | Medium (needs server) |
-| **Reliability** | Depends on AI model | More consistent |
-| **Best for** | Quick integrations | Production workflows |
+MCP (Model Context Protocol) is a standard protocol that lets AI models call external tools directly. Think of it as a plugin system for AI.
 
 ### Architecture
 
@@ -469,59 +355,48 @@ cat ~/.openclaw/openclaw.json | python3 -m json.tool
 You → OpenClaw → mcporter (bridge) → MCP Server → External API
 ```
 
----
-
 ### Step 1: Install UV Package Manager
 
 ```bash
-# Download and install UV
+# Install UV
 curl -LsSf https://astral.sh/uv/install.sh | sh
 
 # Add to current session
 source $HOME/.local/bin/env
 
-# Verify installation
+# Verify
 uv --version
 ```
 
----
+### Step 2: Install mcporter
 
-### Step 2: Find MCP Server on GitHub
+```bash
+# Install globally
+npm install -g mcporter
 
-1. Go to [netboxlabs.com](https://netboxlabs.com)
-2. Click **Community** → **GitHub**
-3. Find `netbox-mcp-server` repository
-4. Copy clone URL
+# Verify
+mcporter --version
+```
 
----
-
-### Step 3: Clone MCP Server
+### Step 3: Clone MCP Server (Example: NetBox)
 
 ```bash
 cd ~
 git clone https://github.com/netboxlabs/netbox-mcp-server.git
 cd netbox-mcp-server
-ls -la
 ```
 
----
-
-### Step 4: Configure Credentials
+### Step 4: Configure MCP Server
 
 ```bash
-# Create .env file with your NetBox details
+# Create credentials file
 cat > .env << 'EOF'
 NETBOX_URL=http://192.168.1.120:8000
-NETBOX_TOKEN=your-netbox-api-token-here
+NETBOX_TOKEN=your-netbox-api-token
 EOF
-
-# Verify
-cat .env
 ```
 
----
-
-### Step 5: Install Dependencies & Test Server
+### Step 5: Install Dependencies & Test
 
 ```bash
 # Install Python dependencies
@@ -538,31 +413,13 @@ uv run netbox-mcp-server
 INFO: Starting MCP server 'NetBox' with transport 'stdio'
 ```
 
-Keep this terminal open, or press `Ctrl+C` and continue.
-
----
-
-### Step 6: Install mcporter (New Terminal)
-
-Open a **new terminal window**:
-
-```bash
-# Install mcporter globally
-npm install -g mcporter
-
-# Verify
-mcporter --version
-```
-
----
-
-### Step 7: Create mcporter Configuration
+### Step 6: Create mcporter Config
 
 ```bash
 # Create config directory
 mkdir -p ~/netbox-mcp-server/config
 
-# Create mcporter config file
+# Create config file
 cat > ~/netbox-mcp-server/config/mcporter.json << 'EOF'
 {
   "mcpServers": {
@@ -579,62 +436,35 @@ cat > ~/netbox-mcp-server/config/mcporter.json << 'EOF'
   "imports": []
 }
 EOF
-
-# Verify file created
-cat ~/netbox-mcp-server/config/mcporter.json
 ```
 
-> **Note:** No `env` section needed - the `.env` file in the project handles credentials.
-
----
-
-### Step 8: Verify mcporter Configuration
+### Step 7: Verify mcporter Configuration
 
 ```bash
-# Set config path for this session
+# Set config path
 export MCPORTER_CONFIG=~/netbox-mcp-server/config/mcporter.json
 
-# Verify path is set
-echo $MCPORTER_CONFIG
-
-# List MCP servers (should show "netbox")
+# List servers (should show "netbox")
 mcporter list
+
+# View available tools
+mcporter netbox --tools
+
+# Test query
+mcporter call netbox.netbox_get_objects object_type="dcim.device" filters="{}"
 ```
 
-**Expected output:**
+**Expected mcporter list output:**
 ```
 mcporter 0.7.3 — Listing 1 server(s)
 - netbox (4 tools, 1.4s)
 ✔ Listed 1 server (1 healthy).
 ```
 
-```bash
-# View available tools
-mcporter netbox --tools
-```
-
-**Expected tools:**
-- `netbox_get_objects`
-- `netbox_get_object_by_id`
-- `netbox_get_changelogs`
-- `netbox_search_objects`
-
----
-
-### Step 9: Test Direct Query
+### Step 8: Update OpenClaw Config
 
 ```bash
-mcporter call netbox.netbox_get_objects object_type="dcim.device" filters="{}"
-```
-
-**Expected:** JSON with your devices.
-
----
-
-### Step 10: Update OpenClaw Config
-
-```bash
-# Backup config first
+# Backup config
 cp ~/.openclaw/openclaw.json ~/.openclaw/openclaw.json.bak
 
 # Add env section with PATH and MCPORTER_CONFIG
@@ -655,63 +485,35 @@ with open('/home/user/.openclaw/openclaw.json', 'w') as f:
 print("✅ env section added!")
 EOF
 
-# Verify env section was added
+# Verify
 cat ~/.openclaw/openclaw.json | grep -A 4 '"env"'
 ```
 
----
-
-### Step 11: Restart Gateway
+### Step 9: Restart Gateway
 
 ```bash
-# Restart to apply changes
 systemctl --user restart openclaw-gateway
-
-# Verify it's running
 systemctl --user status openclaw-gateway
 ```
 
----
-
-### Step 12: Test in Dashboard
+### Step 10: Test in Dashboard
 
 ```bash
-# Get dashboard URL
 openclaw dashboard --no-open
 ```
 
-Open URL in browser → Chat tab → Type:
-
-```
-List all devices in NetBox
-```
-
-🎉 **You should see your devices returned!**
-
----
-
-### MCP Verification Checklist
-
-| Test | Command | Pass? |
-|------|---------|-------|
-| UV installed | `uv --version` | ✅ |
-| mcporter installed | `mcporter --version` | ✅ |
-| Config path set | `echo $MCPORTER_CONFIG` | ✅ |
-| Server found | `mcporter list` → shows "netbox" | ✅ |
-| Tools available | `mcporter netbox --tools` → shows 4 tools | ✅ |
-| Query works | `mcporter call netbox.netbox_get_objects...` | ✅ |
-| OpenClaw env set | `grep -A 4 '"env"' ~/.openclaw/openclaw.json` | ✅ |
+Open URL in browser → Chat tab → Type: `List all devices in NetBox`
 
 </details>
 
 ---
 
 <details>
-<summary><h2>📚 9. Skills</h2></summary>
+<summary><strong>📚 Skills</strong></summary>
 
 ### What Are Skills?
 
-Skills are **markdown files** (SKILL.md) that teach OpenClaw how to perform specific tasks. They're instruction manuals for your AI.
+Skills are markdown files (SKILL.md) that teach OpenClaw how to perform specific tasks. They're like instruction manuals for your AI.
 
 ### Skills Directory
 
@@ -722,22 +524,20 @@ Skills are **markdown files** (SKILL.md) that teach OpenClaw how to perform spec
 ### View Available Skills
 
 ```bash
-# List all skills (51+ built-in)
+# List all skills
 openclaw skills list
 
 # Search for specific skill
 openclaw skills list | grep -i netbox
-openclaw skills list | grep -i github
-openclaw skills list | grep -i docker
 ```
 
 ### Create a Custom Skill
 
 ```bash
-# Step 1: Create skill directory
+# Create skill directory
 mkdir -p ~/.openclaw/workspace/skills/netbox
 
-# Step 2: Create SKILL.md file
+# Create skill file
 cat > ~/.openclaw/workspace/skills/netbox/SKILL.md << 'EOF'
 ---
 name: netbox
@@ -769,11 +569,7 @@ curl -s -H "Authorization: Token YOUR_API_TOKEN" "http://192.168.1.120:8000/api/
 - All devices: `/api/dcim/devices/`
 - Filter by site: `/api/dcim/devices/?site=main-dc`
 - Filter by status: `/api/dcim/devices/?status=active`
-- Filter by tenant: `/api/dcim/devices/?tenant=networkcoder-lab`
 EOF
-
-# Step 3: Verify file created
-cat ~/.openclaw/workspace/skills/netbox/SKILL.md
 ```
 
 ### Reload Skills
@@ -786,14 +582,12 @@ systemctl --user restart openclaw-gateway
 openclaw skills list | grep -i netbox
 ```
 
-**Expected:** `✓ ready | netbox`
-
 ### Skill File Structure
 
 ```yaml
 ---
 name: skill-name
-description: When to use this skill (triggers AI to select it)
+description: When to use this skill (triggers AI to use it)
 ---
 
 # Instructions
@@ -802,29 +596,29 @@ Step-by-step instructions for the AI to follow.
 
 ## Section 1
 
-Commands, examples, details...
+Details...
 
 ## Section 2
 
-More information...
+More details...
 ```
 
-### Example Queries After Setup
+### Skills vs MCP Comparison
 
-```
-List all devices in NetBox
-Show all IP addresses in NetBox
-Show only routers
-What devices are at site Main-DC?
-Give me a summary of my network infrastructure
-```
+| Aspect | Skills | MCP |
+|--------|--------|-----|
+| **What it is** | Markdown instructions | Tool protocol |
+| **How AI uses it** | Reads & executes commands | Calls tools directly |
+| **Setup complexity** | Easy (just .md file) | Medium (needs server) |
+| **Reliability** | Depends on AI model | More consistent |
+| **Best for** | Quick custom integrations | Production workflows |
 
 </details>
 
 ---
 
 <details>
-<summary><h2>🔍 10. Troubleshooting</h2></summary>
+<summary><strong>🔍 Troubleshooting</strong></summary>
 
 ### Diagnostic Commands
 
@@ -832,7 +626,7 @@ Give me a summary of my network infrastructure
 # Run full diagnostics
 openclaw doctor
 
-# Auto-fix common issues
+# Auto-fix issues
 openclaw doctor --fix
 
 # Security audit
@@ -840,25 +634,86 @@ openclaw security audit --deep
 
 # Auto-fix security issues
 openclaw security audit --fix
-
-# Generate new gateway token
-openclaw doctor --generate-gateway-token
 ```
 
-### Quick Health Checks
+### Common Issues & Solutions
 
+#### Issue: `openclaw: command not found`
+
+**Cause:** npm global bin not in PATH
+
+**Fix:**
 ```bash
-# Is gateway running?
-systemctl --user is-active openclaw-gateway
+echo 'export PATH="$HOME/.npm-global/bin:$PATH"' >> ~/.bashrc
+source ~/.bashrc
+```
 
-# OpenClaw version
-openclaw --version
+#### Issue: `uv: command not found`
 
-# Config syntax valid?
-cat ~/.openclaw/openclaw.json | python3 -m json.tool
+**Cause:** UV not in PATH
 
-# MCP server accessible?
-mcporter list
+**Fix:**
+```bash
+source $HOME/.local/bin/env
+```
+
+#### Issue: `Unknown MCP server 'netbox'`
+
+**Cause:** MCPORTER_CONFIG not set in OpenClaw
+
+**Fix:**
+```bash
+# Add to ~/.openclaw/openclaw.json env section:
+"MCPORTER_CONFIG": "/home/user/netbox-mcp-server/config/mcporter.json"
+
+# Restart gateway
+systemctl --user restart openclaw-gateway
+```
+
+#### Issue: `spawn uv ENOENT`
+
+**Cause:** OpenClaw can't find UV binary
+
+**Fix:**
+```bash
+# Add to ~/.openclaw/openclaw.json env section:
+"PATH": "/home/user/.local/bin:/home/user/.npm-global/bin:/usr/local/bin:/usr/bin:/bin"
+
+# Restart gateway
+systemctl --user restart openclaw-gateway
+```
+
+#### Issue: `device signature expired` in Dashboard
+
+**Cause:** Stale browser session
+
+**Fix:**
+```bash
+# Clear browser localStorage for localhost:18789
+# Then get fresh URL:
+openclaw dashboard --no-open
+```
+
+#### Issue: Model doesn't follow skills
+
+**Cause:** Free models may not follow instructions well
+
+**Fix:**
+- Be explicit in prompts: `"Run: curl -s -H 'Authorization: Token XXX' http://..."`
+- Use better model: `openrouter/anthropic/claude-sonnet-4`
+
+#### Issue: Gateway not starting
+
+**Fix:**
+```bash
+# Check status
+systemctl --user status openclaw-gateway
+
+# View logs
+journalctl --user -u openclaw-gateway -n 50
+
+# Restart
+systemctl --user restart openclaw-gateway
 ```
 
 </details>
@@ -866,7 +721,7 @@ mcporter list
 ---
 
 <details>
-<summary><h2>📜 11. Logs</h2></summary>
+<summary><strong>📜 Logs</strong></summary>
 
 ### View Gateway Logs
 
@@ -874,23 +729,23 @@ mcporter list
 # Last 50 lines
 journalctl --user -u openclaw-gateway -n 50
 
-# Follow logs in real-time
+# Follow in real-time
 journalctl --user -u openclaw-gateway -f
 
-# Logs since today
+# Since today
 journalctl --user -u openclaw-gateway --since today
 
-# Logs from last hour
+# Since specific time
 journalctl --user -u openclaw-gateway --since "1 hour ago"
 
-# With timestamps, no pager
+# With timestamps (no pager)
 journalctl --user -u openclaw-gateway -n 100 --no-pager
 ```
 
-### Dashboard Debug Tab
+### Debug in Dashboard
 
 1. Open Dashboard
-2. Click **Debug** in sidebar
+2. Click **Debug** in sidebar (under Settings)
 3. View real-time request/response logs
 
 </details>
@@ -898,7 +753,7 @@ journalctl --user -u openclaw-gateway -n 100 --no-pager
 ---
 
 <details>
-<summary><h2>🗑️ 12. Uninstallation</h2></summary>
+<summary><strong>🗑️ Uninstallation</strong></summary>
 
 ### Complete Removal
 
@@ -920,8 +775,7 @@ rm -rf ~/.config/systemd/user/openclaw-gateway.service.d
 systemctl --user daemon-reload
 
 # Step 5: Verify removal
-openclaw --version
-# Should show: command not found
+openclaw --version  # Should show: command not found
 ```
 
 ### Keep Config, Remove Package Only
@@ -930,7 +784,7 @@ openclaw --version
 npm uninstall -g openclaw
 ```
 
-### Remove MCP Components (Optional)
+### Remove MCP Server (Optional)
 
 ```bash
 rm -rf ~/netbox-mcp-server
@@ -941,147 +795,10 @@ npm uninstall -g mcporter
 
 ---
 
-<details>
-<summary><h2>⚠️ 13. Common Issues & Solutions</h2></summary>
-
-### Issue: `openclaw: command not found`
-
-**Cause:** npm global bin not in PATH
-
-**Fix:**
-```bash
-echo 'export PATH="$HOME/.npm-global/bin:$PATH"' >> ~/.bashrc
-source ~/.bashrc
-```
-
----
-
-### Issue: `uv: command not found`
-
-**Cause:** UV not in PATH
-
-**Fix:**
-```bash
-source $HOME/.local/bin/env
-```
-
----
-
-### Issue: `mcporter: command not found`
-
-**Cause:** npm global bin not in PATH
-
-**Fix:**
-```bash
-echo 'export PATH="$HOME/.npm-global/bin:$PATH"' >> ~/.bashrc
-source ~/.bashrc
-```
-
----
-
-### Issue: `Unknown MCP server 'netbox'`
-
-**Cause:** MCPORTER_CONFIG not set in OpenClaw
-
-**Fix:**
-```bash
-# Add to ~/.openclaw/openclaw.json env section:
-"MCPORTER_CONFIG": "/home/user/netbox-mcp-server/config/mcporter.json"
-
-# Restart gateway
-systemctl --user restart openclaw-gateway
-```
-
----
-
-### Issue: `spawn uv ENOENT`
-
-**Cause:** OpenClaw can't find UV binary
-
-**Fix:**
-```bash
-# Add to ~/.openclaw/openclaw.json env section:
-"PATH": "/home/user/.local/bin:/home/user/.npm-global/bin:/usr/local/bin:/usr/bin:/bin"
-
-# Restart gateway
-systemctl --user restart openclaw-gateway
-```
-
----
-
-### Issue: `device signature expired` in Dashboard
-
-**Cause:** Stale browser session
-
-**Fix:**
-```bash
-# Clear browser localStorage for localhost:18789
-# Then get fresh URL:
-openclaw dashboard --no-open
-```
-
----
-
-### Issue: Model doesn't follow skills
-
-**Cause:** Free models may not follow instructions reliably
-
-**Fix Options:**
-1. Be explicit: `"Run: curl -s -H 'Authorization: Token XXX' http://..."`
-2. Use better model: `openrouter/anthropic/claude-sonnet-4`
-
----
-
-### Issue: Gateway not starting
-
-**Fix:**
-```bash
-# Check status
-systemctl --user status openclaw-gateway
-
-# View error logs
-journalctl --user -u openclaw-gateway -n 50
-
-# Try manual start
-openclaw daemon start
-```
-
----
-
-### Issue: NetBox connection refused
-
-**Cause:** Wrong URL or token in .env
-
-**Fix:**
-```bash
-# Verify .env contents
-cat ~/netbox-mcp-server/.env
-
-# Test connection manually
-curl -s -H "Authorization: Token YOUR_TOKEN" \
-  "http://192.168.1.120:8000/api/dcim/devices/"
-```
-
----
-
-### Issue: Config validation error
-
-**Fix:**
-```bash
-# Restore backup
-cp ~/.openclaw/openclaw.json.bak ~/.openclaw/openclaw.json
-
-# Or run doctor
-openclaw doctor --fix
-```
-
-</details>
-
----
-
 ## 📋 Quick Reference
 
-### Essential Commands
+<details>
+<summary><strong>Essential Commands</strong></summary>
 
 | Task | Command |
 |------|---------|
@@ -1096,17 +813,36 @@ openclaw doctor --fix
 | Restart | `systemctl --user restart openclaw-gateway` |
 | Status | `systemctl --user status openclaw-gateway` |
 | Logs | `journalctl --user -u openclaw-gateway -f` |
-| Skills List | `openclaw skills list` |
+| Skills | `openclaw skills list` |
 
-### MCP Commands
+</details>
+
+<details>
+<summary><strong>File Locations</strong></summary>
+
+| File | Location |
+|------|----------|
+| Main config | `~/.openclaw/openclaw.json` |
+| Config backup | `~/.openclaw/openclaw.json.bak` |
+| Workspace | `~/.openclaw/workspace/` |
+| Skills | `~/.openclaw/workspace/skills/` |
+| Sessions | `~/.openclaw/agents/main/sessions/` |
+| Systemd service | `~/.config/systemd/user/openclaw-gateway.service` |
+
+</details>
+
+<details>
+<summary><strong>MCP Commands</strong></summary>
 
 | Task | Command |
 |------|---------|
 | Install UV | `curl -LsSf https://astral.sh/uv/install.sh \| sh` |
 | Install mcporter | `npm install -g mcporter` |
-| List servers | `mcporter list` |
+| List MCP servers | `mcporter list` |
 | View tools | `mcporter netbox --tools` |
 | Test query | `mcporter call netbox.netbox_get_objects object_type="dcim.device" filters="{}"` |
+
+</details>
 
 ---
 
@@ -1116,6 +852,7 @@ openclaw doctor --fix
 |----------|------|
 | OpenClaw Website | [openclaw.ai](https://openclaw.ai) |
 | Documentation | [docs.openclaw.ai](https://docs.openclaw.ai) |
+| Security Guide | [docs.openclaw.ai/gateway/security](https://docs.openclaw.ai/gateway/security) |
 | OpenRouter | [openrouter.ai](https://openrouter.ai) |
 | MCP Registry | [github.com/modelcontextprotocol/servers](https://github.com/modelcontextprotocol/servers) |
 | NetBox MCP | [github.com/netboxlabs/netbox-mcp-server](https://github.com/netboxlabs/netbox-mcp-server) |
