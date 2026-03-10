@@ -860,6 +860,6 @@ npm uninstall -g mcporter
 ---
 
 <p align="center">
-  <strong>Made with 🦞 by the OpenClaw Community</strong><br>
+  <strong>Made with 🦞 by the NetworkCoder Community</strong><br>
   <em>Last Updated: March 2026</em>
 </p>
